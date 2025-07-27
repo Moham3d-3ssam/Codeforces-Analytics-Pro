@@ -1,0 +1,36 @@
+{
+  "manifest_version": 3,
+  "name": "Codeforces Analytics Pro",
+  "version": "1.0.0",
+  "description": "Advanced analytics for Codeforces users - track topic-wise accuracy, contest progress, and performance insights",
+  "permissions": [
+    "activeTab",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://codeforces.com/*",
+    "https://codeforces.ru/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://codeforces.com/*",
+        "https://codeforces.ru/*"
+      ],
+      "js": ["simple-charts.js", "content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_idle"
+    }
+    ],
+  "web_accessible_resources": [
+    {
+      "resources": ["simple-charts.js"],
+      "matches": ["https://codeforces.com/*", "https://codeforces.ru/*"]
+    }
+  ],
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}

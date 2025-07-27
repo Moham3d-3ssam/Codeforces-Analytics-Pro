@@ -1,0 +1,16 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <rect width="128" height="128" fill="url(#grad)" rx="4"/>
+  <g fill="white" opacity="0.9">
+    <rect x="16" y="64" width="10" height="42"/>
+    <rect x="32" y="42" width="10" height="64"/>
+    <rect x="48" y="76" width="10" height="32"/>
+    <rect x="64" y="21" width="10" height="85"/>
+  </g>
+  <text x="64" y="124" text-anchor="middle" fill="white" font-size="16" font-family="Arial">📊</text>
+</svg>
