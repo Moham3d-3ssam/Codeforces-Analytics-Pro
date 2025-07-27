@@ -70,104 +70,6 @@ zip -r codeforces-analytics-pro.zip manifest.json content.js styles.css *.png *.
 
 Then load the ZIP file through Chrome's extension management page.
 
-## 🔧 Usage
-
-### For Any User Profile
-
-1. **Navigate to Profile**
-   - Go to any Codeforces user profile: `https://codeforces.com/profile/[username]`
-
-2. **Access Analytics**
-   - Look for the "📊 Analytics" button (usually appears in the user info section)
-   - Click to view comprehensive topic-wise statistics
-   - Click "🏆 Contest Progress" for contest analytics
-
-3. **Interpret Results**
-   - **Accuracy Chart**: Shows success rate for each topic you've attempted
-   - **Solved vs Total**: Compares your solved problems to total available problems
-   - **Topic Distribution**: Pie chart showing your problem-solving distribution
-   - **Rating Progress**: Line chart of your contest rating over time
-
-### Understanding the Data
-
-- **Attempted**: Number of problems you've submitted for each topic
-- **Solved**: Number of problems you've successfully solved
-- **Accuracy**: (Solved / Attempted) × 100%
-- **First Attempt**: Problems solved on the very first submission
-- **Total in CF**: Live count of all problems available on Codeforces for each topic
-
-## 🛠️ Technical Details
-
-### Files Structure
-```
-codeforces-analytics-pro/
-├── manifest.json          # Extension configuration
-├── content.js            # Main functionality and API calls
-├── styles.css           # Modern styling and responsive design
-├── chart.min.js         # Chart.js library (bundled locally for CSP compliance)
-├── icon16.png           # 16x16 extension icon
-├── icon48.png           # 48x48 extension icon
-├── icon128.png          # 128x128 extension icon
-└── README.md            # This file
-```
-
-### APIs Used
-- **Codeforces API**: 
-  - `user.status` - Fetch user submissions
-  - `user.info` - Get user information
-  - `user.rating` - Contest rating history
-  - `problemset.problems` - All problems and their tags (for live counts)
-
-### Browser Compatibility
-- ✅ Chrome (recommended)
-- ✅ Microsoft Edge
-- ✅ Brave
-- ✅ Any Chromium-based browser
-
-### Permissions Required
-- `activeTab`: To interact with Codeforces pages
-- `storage`: To cache problem counts for better performance
-- Host permissions for `codeforces.com` and `codeforces.ru`
-
-## 🔍 Troubleshooting
-
-### Extension Doesn't Show Buttons
-1. **Check URL**: Make sure you're on a Codeforces profile page
-2. **Refresh Page**: Try refreshing the page after installing
-3. **Check Console**: Open DevTools (F12) and check for errors
-4. **CSP Issues**: If you see Content Security Policy errors, make sure you're using the latest version with bundled Chart.js
-
-### "Could not detect user" Error
-1. **Profile Page**: Ensure you're on `/profile/username` page
-2. **Valid Username**: Check that the username exists
-3. **Page Load**: Wait for page to fully load before clicking
-
-### API Errors
-1. **Network Issues**: Check your internet connection
-2. **Rate Limiting**: Codeforces API has rate limits; wait a moment and retry
-3. **Invalid Handle**: Ensure the username is spelled correctly
-
-### Performance Issues
-1. **Large Submission Count**: Users with 10,000+ submissions may take longer to load
-2. **Slow Network**: API calls may timeout on slow connections
-3. **Cache**: The extension caches problem counts for 24 hours to improve performance
-
-## 🎨 Customization
-
-### Modifying Styles
-Edit `styles.css` to customize:
-- Colors and gradients
-- Button styles
-- Modal appearance
-- Chart layouts
-
-### Adding Features
-Edit `content.js` to add:
-- New chart types
-- Additional statistics
-- Different analysis methods
-- Enhanced UI elements
-
 ## 📊 Features Breakdown
 
 ### ✅ Implemented Features
@@ -193,10 +95,6 @@ To contribute to this extension:
 2. Make your changes
 3. Test thoroughly on different Codeforces profiles
 4. Submit a pull request
-
-## 📄 License
-
-This project is open source and available under the MIT License.
 
 ## 🙋‍♂️ Support
 
