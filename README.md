@@ -9,16 +9,7 @@ A powerful browser extension that provides comprehensive analytics for Codeforce
 - **Problem Distribution**: Visual breakdown of solved vs available problems by topic
 - **First Attempt Success**: Track problems solved on first try
 - **Real-time Data**: Problem counts fetched live from Codeforces API
-
-### 🏆 Contest Progress
-- **Rating History**: Interactive chart showing rating progression over time
-- **Contest Statistics**: Total contests participated, current and max rating
-- **Performance Tracking**: Detailed contest performance metrics
-
-### 📈 Visual Analytics
-- **Interactive Charts**: Bar charts, pie charts, and line graphs using Chart.js
-- **Responsive Design**: Works perfectly on desktop and mobile
-- **Modern UI**: Beautiful, gradient-based interface with smooth animations
+<img width="1125" height="553" alt="01" src="https://github.com/user-attachments/assets/67c30e6a-143b-46a3-881b-c43b89649c05" />
 
 ### 🎯 All 36 Topics Covered
 - 2-sat, binary search, bitmasks, brute force, chinese remainder theorem
@@ -28,6 +19,20 @@ A powerful browser extension that provides comprehensive analytics for Codeforce
 - implementation, interactive, math, matrices, meet-in-the-middle
 - number theory, probabilities, schedules, shortest paths, sortings
 - string suffix structures, strings, ternary search, trees, two pointers
+<img width="1516" height="852" alt="02" src="https://github.com/user-attachments/assets/b4092319-8924-4ac5-8e66-7833d6d3b5d2" />
+<img width="1520" height="856" alt="03" src="https://github.com/user-attachments/assets/0c415061-b3bc-4434-80e7-70b629c25d64" />
+<img width="1517" height="856" alt="04" src="https://github.com/user-attachments/assets/4ce4ae2b-b4c3-4fef-873a-2d8ebfc4b5af" />
+
+### 🏆 Contest Progress
+- **Rating History**: Interactive chart showing rating progression over time
+- **Contest Statistics**: Total contests participated, current and max rating
+- **Performance Tracking**: Detailed contest performance metrics  
+<img width="1521" height="848" alt="05" src="https://github.com/user-attachments/assets/81f9eb2f-f239-4603-b9e6-48283c9ed433" />
+
+### 📈 Visual Analytics
+- **Interactive Charts**: Bar charts, pie charts, and line graphs using Chart.js
+- **Responsive Design**: Works perfectly on desktop and mobile
+- **Modern UI**: Beautiful, gradient-based interface with smooth animations
 
 ## 🚀 Installation
 
