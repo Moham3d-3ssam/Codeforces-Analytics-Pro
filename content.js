@@ -26,22 +26,29 @@
     // Initialize the extension
     async function init() {
         try {
-            // Check if SimpleChart is available
+            const mainInfoBadges = document.querySelectorAll('.main-info .badge');
+            mainInfoBadges.forEach(el => el.remove());
+
+            const mainInfo = document.querySelector('.main-info.main-info-has-badge');
+            if (mainInfo) {
+                mainInfo.style.position = 'static';
+            }
+
             await checkSimpleChart();
             detectCurrentUser();
-            loadTopicProblemCounts();
+            await loadTopicProblemCounts();
             if (isProfilePage() || isUserPage()) {
                 addAnalyticsButton();
             }
         } catch (error) {
             console.error('Failed to initialize extension:', error);
-            // Add buttons anyway, charts will show error messages
             detectCurrentUser();
             if (isProfilePage() || isUserPage()) {
                 addAnalyticsButton();
             }
         }
     }
+    
 
     // Simple check for our chart library
     function checkSimpleChart() {
