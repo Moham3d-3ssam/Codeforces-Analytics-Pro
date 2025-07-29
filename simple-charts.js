@@ -75,7 +75,6 @@ class SimpleChart {
         }
     }
     
-    // --- MODIFIED to call drawTooltip ---
     draw() {
         this.ctx.clearRect(0, 0, this.width, this.height);
         
@@ -102,19 +101,64 @@ class SimpleChart {
     drawBarChart() {
         // ... (this function is unchanged)
     }
+
+    // --- MODIFIED: Draws Rating Tiers with colored, aligned, and abbreviated labels ---
+    drawRatingBands(minValue, maxValue, padding, chartHeight) {
+        const ratingTiers = [
+            { name: 'Newbie', abbr: 'Newbie', min: 0, max: 1199, color: '#808080' },
+            { name: 'Pupil', abbr: 'Pupil', min: 1200, max: 1399, color: '#008000' },
+            { name: 'Specialist', abbr: 'Specialist', min: 1400, max: 1599, color: '#03a89e' },
+            { name: 'Expert', abbr: 'Expert', min: 1600, max: 1899, color: '#0000FF' },
+            { name: 'Candidate Master', abbr: 'C. Master', min: 1900, max: 2099, color: '#aa00aa' },
+            { name: 'Master', abbr: 'Master', min: 2100, max: 2299, color: '#ff8c00' },
+            { name: 'Int. Master', abbr: 'I. Master', min: 2300, max: 2399, color: '#ff8c00' },
+            { name: 'Grandmaster', abbr: 'G. Master', min: 2400, max: 2599, color: '#FF0000' },
+            { name: 'Int. Grandmaster', abbr: 'I.G.M.', min: 2600, max: 2999, color: '#FF0000' },
+            { name: 'Legendary', abbr: 'Legendary', min: 3000, max: 4000, color: '#cc0000' }
+        ];
+
+        const getY = (rating) => padding + chartHeight - ((rating - minValue) / (maxValue - minValue)) * chartHeight;
+
+        this.ctx.save();
+        this.ctx.font = 'bold 10px Arial';
+        this.ctx.textBaseline = 'bottom'; // Align text to be drawn just above the line
+        this.ctx.textAlign = 'right';
+
+        ratingTiers.forEach(tier => {
+            // Only draw the tier if its starting rating is within the visible range
+            if (tier.min >= minValue && tier.min <= maxValue) {
+                const y = getY(tier.min);
+                
+                // Draw horizontal line
+                this.ctx.beginPath();
+                this.ctx.strokeStyle = 'rgba(0, 0, 0, 0.1)';
+                this.ctx.lineWidth = 1;
+                this.ctx.moveTo(padding, y);
+                this.ctx.lineTo(this.width - padding, y);
+                this.ctx.stroke();
+
+                // Draw label with the tier's color, positioned precisely
+                this.ctx.fillStyle = tier.color;
+                this.ctx.fillText(tier.abbr, padding - 10, y - 2);
+            }
+        });
+
+        this.ctx.restore();
+    }
     
-    // --- MODIFIED to handle object data and store point coordinates ---
     drawLineChart() {
         const data = this.config.data;
         const labels = data.labels;
         const datasets = data.datasets;
+        const options = this.config.options || {};
+        const maxUserRating = (options.plugins && options.plugins.ratingBands) ? options.plugins.ratingBands.maxRating : -1;
 
         if (!labels || !datasets || labels.length === 0) {
             this.drawNoDataMessage();
             return;
         }
 
-        const padding = 40;
+        const padding = 65; // Increased padding to make space for labels
         const chartWidth = this.width - 2 * padding;
         const chartHeight = this.height - 2 * padding - 40;
 
@@ -127,10 +171,21 @@ class SimpleChart {
             });
         });
 
+        const tierThresholds = [1200, 1400, 1600, 1900, 2100, 2300, 2400, 2600, 3000];
+        let nextTier = tierThresholds.find(t => t > maxValue);
+        if (nextTier) {
+            maxValue = nextTier;
+        } else {
+            maxValue = Math.ceil((maxValue + 1) / 100) * 100;
+        }
+        minValue = Math.floor(minValue / 100) * 100;
+
         if (maxValue === minValue) {
             maxValue += 100;
             minValue -= 100;
         }
+
+        this.drawRatingBands(minValue, maxValue, padding, chartHeight);
 
         const pointSpacing = labels.length > 1 ? chartWidth / (labels.length - 1) : chartWidth;
 
@@ -142,7 +197,7 @@ class SimpleChart {
         this.ctx.lineTo(padding + chartWidth, padding + chartHeight);
         this.ctx.stroke();
 
-        this.pointCoordinates = []; // Reset coordinates for this frame
+        this.pointCoordinates = []; 
 
         const totalSegments = labels.length - 1;
         if (totalSegments < 0) return;
@@ -158,7 +213,6 @@ class SimpleChart {
 
             let lastX, lastY;
             
-            // This function calculates and stores coordinates
             const getPointCoords = (index) => {
                 const value = dataset.data[index].newRating;
                 const x = padding + index * pointSpacing;
@@ -200,16 +254,27 @@ class SimpleChart {
             for (let i = 0; i < pointsToShow; i++) {
                  const { x, y } = this.pointCoordinates[i] || getPointCoords(i);
                  this.ctx.beginPath();
-                 this.ctx.arc(x, y, 3, 0, 2 * Math.PI);
-                 // Highlight hovered point
-                 if (i === this.hoveredIndex) {
+
+                 if (dataset.data[i].newRating === maxUserRating) {
                      this.ctx.save();
-                     this.ctx.fillStyle = this.lightenColor(dataset.borderColor || this.getColor(datasetIndex), 50);
+                     this.ctx.fillStyle = '#FFD700';
+                     this.ctx.strokeStyle = '#B8860B';
+                     this.ctx.lineWidth = 2;
                      this.ctx.arc(x, y, 6, 0, 2 * Math.PI);
                      this.ctx.fill();
+                     this.ctx.stroke();
                      this.ctx.restore();
                  } else {
-                     this.ctx.fill();
+                     this.ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                     if (i === this.hoveredIndex) {
+                         this.ctx.save();
+                         this.ctx.fillStyle = this.lightenColor(dataset.borderColor || this.getColor(datasetIndex), 50);
+                         this.ctx.arc(x, y, 6, 0, 2 * Math.PI);
+                         this.ctx.fill();
+                         this.ctx.restore();
+                     } else {
+                         this.ctx.fill();
+                     }
                  }
             }
         });
@@ -245,17 +310,16 @@ class SimpleChart {
        // ... (this function is unchanged)
     }
     
-    // --- MODIFIED to handle line chart hover detection ---
     handleMouseMove(x, y) {
         let needsRedraw = false;
         let foundHover = false;
     
         if (this.config.type === 'line') {
             this.pointCoordinates.forEach((coords, index) => {
-                if (foundHover) return; // Only hover the first one found
+                if (foundHover) return; 
                 const distance = Math.sqrt(Math.pow(x - coords.x, 2) + Math.pow(y - coords.y, 2));
     
-                if (distance < 8) { // 8px hover radius
+                if (distance < 8) {
                     if (this.hoveredIndex !== index) {
                         this.hoveredIndex = index;
                         needsRedraw = true;
@@ -276,10 +340,14 @@ class SimpleChart {
     }
     
     handleClick(x, y) {
-       // ... (this function is unchanged)
+        if (this.config.type === 'line' && this.hoveredIndex !== -1) {
+            const contest = this.config.data.datasets[0].data[this.hoveredIndex];
+            if (contest && contest.contestId) {
+                window.open(`https://codeforces.com/contest/${contest.contestId}`, '_blank');
+            }
+        }
     }
     
-    // --- NEW FUNCTION to draw the tooltip ---
     drawTooltip() {
         const pointData = this.config.data.datasets[0].data[this.hoveredIndex];
         if (!pointData || !this.pointCoordinates[this.hoveredIndex]) return;
@@ -296,34 +364,28 @@ class SimpleChart {
             { text: `(${sign}${ratingChange})`, font: 'bold 11px Arial', color: changeColor }
         ];
 
-        // Calculate tooltip size
         let tooltipWidth = 0;
-        this.ctx.font = 'bold 12px Arial'; // For the widest line (title)
+        this.ctx.font = 'bold 12px Arial'; 
         tooltipWidth = this.ctx.measureText(lines[0].text).width;
         
-        // Measure rating line width including the change part
         this.ctx.font = '11px Arial';
         let ratingLineWidth = this.ctx.measureText(lines[3].text).width;
         this.ctx.font = 'bold 11px Arial';
         ratingLineWidth += this.ctx.measureText(lines[4].text).width;
         tooltipWidth = Math.max(tooltipWidth, ratingLineWidth);
 
-
         const padding = 10;
         const lineHeight = 15;
-        const tooltipHeight = lines.length * lineHeight - (lineHeight - 5) + padding * 2; // Compact the rating line
+        const tooltipHeight = lines.length * lineHeight - (lineHeight - 5) + padding * 2;
         tooltipWidth += padding * 2;
 
-        // Tooltip position
         let tx = this.pointCoordinates[this.hoveredIndex].x - tooltipWidth / 2;
-        let ty = this.pointCoordinates[this.hoveredIndex].y - tooltipHeight - 10; // 10px above the point
+        let ty = this.pointCoordinates[this.hoveredIndex].y - tooltipHeight - 10;
 
-        // Adjust position to stay within canvas bounds
         if (tx < 0) tx = 5;
         if (tx + tooltipWidth > this.width) tx = this.width - tooltipWidth - 5;
         if (ty < 0) ty = this.pointCoordinates[this.hoveredIndex].y + 15;
 
-        // Draw box
         this.ctx.save();
         this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
         this.ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
@@ -344,19 +406,18 @@ class SimpleChart {
         this.ctx.fill();
         this.ctx.restore();
 
-        // Draw text
         this.ctx.textAlign = 'left';
         this.ctx.textBaseline = 'middle';
         let currentY = ty + padding + lineHeight/2;
         
         for (let i = 0; i < lines.length; i++) {
-            if (i === 4) continue; // Skip the rating change line, it's drawn next to the rating
+            if (i === 4) continue;
 
             this.ctx.font = lines[i].font;
             this.ctx.fillStyle = lines[i].color;
             this.ctx.fillText(lines[i].text, tx + padding, currentY);
 
-            if (i === 3) { // After drawing "Rating: XXX"
+            if (i === 3) { 
                 this.ctx.font = '11px Arial';
                 const ratingTextWidth = this.ctx.measureText(lines[i].text).width;
                 this.ctx.font = lines[i+1].font;
@@ -364,12 +425,11 @@ class SimpleChart {
                 this.ctx.fillText(lines[i+1].text, tx + padding + ratingTextWidth, currentY);
             }
 
-            if (i < lines.length - 2) { // don't add line height for the combined rating line
+            if (i < lines.length - 2) {
                  currentY += lineHeight;
             }
         }
     }
 }
 
-// Global Chart object to mimic Chart.js API
 window.Chart = SimpleChart;

@@ -611,6 +611,91 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
 }
 
+/* Custom Contest Tooltip */
+.cf-custom-tooltip {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    min-width: 200px;
+    max-width: 280px;
+    animation: tooltipFadeIn 0.3s ease;
+}
+
+@keyframes tooltipFadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.cf-tooltip-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.cf-tooltip-title {
+    font-weight: 700;
+    font-size: 16px;
+    color: white;
+}
+
+.cf-tooltip-date {
+    font-size: 12px;
+    opacity: 0.8;
+}
+
+.cf-tooltip-content {
+    margin-bottom: 12px;
+}
+
+.cf-tooltip-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.cf-tooltip-label {
+    font-weight: 600;
+    opacity: 0.9;
+}
+
+.cf-tooltip-value {
+    font-weight: 700;
+}
+
+.cf-tooltip-value.cf-positive {
+    color: #4ade80;
+}
+
+.cf-tooltip-value.cf-negative {
+    color: #f87171;
+}
+
+.cf-tooltip-footer {
+    text-align: center;
+}
+
+.cf-tooltip-hint {
+    font-size: 11px;
+    opacity: 0.7;
+    font-style: italic;
+    text-align: center;
+    color: rgba(255, 255, 255, 0.8);
+}
+
 /* Navigation Header Styles */
 .cf-navigation-header {
     display: flex;

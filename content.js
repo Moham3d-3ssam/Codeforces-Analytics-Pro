@@ -1000,7 +1000,7 @@
         setTimeout(() => {
             console.log('Creating rating chart with data:', contestStats.contestHistory);
             try {
-                createRatingChart(contestStats.contestHistory);
+                createRatingChart(contestStats); // Pass the whole stats object
             } catch (error) {
                 console.error('Error creating rating chart:', error);
             }
@@ -1181,6 +1181,69 @@
         }
     }
 
+    // Show custom tooltip for contest points
+    function showCustomTooltip(event, contest, dataIndex) {
+        // Remove existing tooltip
+        hideCustomTooltip();
+        
+        const tooltip = document.createElement('div');
+        tooltip.className = 'cf-custom-tooltip';
+        tooltip.id = 'cf-contest-tooltip';
+        
+        const contestName = contest.contestName || `Contest ${dataIndex + 1}`;
+        const contestDate = new Date(contest.ratingUpdateTimeSeconds * 1000).toLocaleDateString();
+        const rank = contest.rank || 'N/A';
+        const rating = contest.newRating || 'N/A';
+        const change = contest.newRating - contest.oldRating;
+        const changeText = change > 0 ? `+${change}` : `${change}`;
+        
+        tooltip.innerHTML = `
+            <div class="cf-tooltip-header">
+                <span class="cf-tooltip-title">${contestName}</span>
+                <span class="cf-tooltip-date">${contestDate}</span>
+            </div>
+            <div class="cf-tooltip-content">
+                <div class="cf-tooltip-row">
+                    <span class="cf-tooltip-label">Rank:</span>
+                    <span class="cf-tooltip-value">${rank}</span>
+                </div>
+                <div class="cf-tooltip-row">
+                    <span class="cf-tooltip-label">Rating:</span>
+                    <span class="cf-tooltip-value">${rating}</span>
+                </div>
+                <div class="cf-tooltip-row">
+                    <span class="cf-tooltip-label">Change:</span>
+                    <span class="cf-tooltip-value ${change >= 0 ? 'cf-positive' : 'cf-negative'}">${changeText}</span>
+                </div>
+            </div>
+            <div class="cf-tooltip-footer">
+                <span class="cf-tooltip-hint">Click point to open contest</span>
+            </div>
+        `;
+        
+        // Position tooltip
+        const rect = event.native.target.getBoundingClientRect();
+        const x = event.native.offsetX + rect.left;
+        const y = event.native.offsetY + rect.top - 150;
+        
+        tooltip.style.position = 'fixed';
+        tooltip.style.left = `${x}px`;
+        tooltip.style.top = `${y}px`;
+        tooltip.style.zIndex = '10001';
+        
+        document.body.appendChild(tooltip);
+    }
+
+    // Hide custom tooltip
+    function hideCustomTooltip() {
+        const existingTooltip = document.getElementById('cf-contest-tooltip');
+        if (existingTooltip) {
+            document.body.removeChild(existingTooltip);
+        }
+    }
+
+
+
     // Check and disable navigation buttons based on restrictions
     async function checkNavigationRestrictions(currentStats, prevBtn, nextBtn) {
         const user = getCurrentPageUser();
@@ -1230,13 +1293,19 @@
         }
     }
 
-    // Create rating progress chart
-    function createRatingChart(contestHistory) {
+    // --- MODIFIED: Create rating progress chart ---
+    function createRatingChart(contestStats) {
+        const { contestHistory, maxRating } = contestStats;
         const canvas = document.getElementById('cf-rating-chart');
         console.log('Creating rating chart, canvas:', canvas, 'Chart available:', !!window.Chart, 'History length:', contestHistory?.length);
         
         if (!canvas || !window.Chart) {
             console.error('Cannot create rating chart - missing canvas or SimpleChart');
+            return;
+        }
+
+        if (contestHistory.length === 0) {
+            canvas.parentElement.innerHTML += '<p class="cf-no-data">No contest history found for this user.</p>';
             return;
         }
 
@@ -1248,95 +1317,47 @@
             const chart = new Chart(canvas, {
                 type: 'line',
                 data: {
-                    labels: contestHistory.map((contest, index) => {
-                        // Create clickable contest name with hover effect
-                        const contestName = contest.contestName || `Contest ${index + 1}`;
-                        const contestDate = new Date(contest.ratingUpdateTimeSeconds * 1000).toLocaleDateString();
-                        const rank = contest.rank || 'N/A';
-                        const rating = contest.newRating || 'N/A';
-                        
-                        return `<span class="cf-contest-label" 
-                                   data-contest-id="${contest.contestId}" 
-                                   data-contest-name="${contestName}"
-                                   data-contest-date="${contestDate}"
-                                   data-contest-rank="${rank}"
-                                   data-contest-rating="${rating}"
-                                   style="cursor: pointer; text-decoration: underline; color: #667eea;">
-                                   ${contestName}
-                               </span>`;
-                    }),
+                    labels: contestHistory.map((_, index) => index + 1),
                     datasets: [{
                         label: 'Rating',
                         data: contestHistory,
-                        borderColor: 'rgba(75, 192, 192, 1)',
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                        borderColor: '#667eea',
+                        backgroundColor: 'rgba(102, 126, 234, 0.2)',
                         fill: true
                     }]
                 },
                 options: {
                     responsive: true,
-                    scales: {
-                        x: {
-                            ticks: {
-                                display: false
-                            }
-                        },
-                        y: {
-                            beginAtZero: false
+                    plugins: {
+                        // NEW: Pass maxRating to the chart for highlighting
+                        ratingBands: {
+                            enabled: true,
+                            maxRating: maxRating
                         }
                     },
-                    plugins: {
-                        tooltip: {
-                            callbacks: {
-                                title: function(context) {
-                                    const contest = contestHistory[context[0].dataIndex];
-                                    const contestName = contest.contestName || `Contest ${context[0].dataIndex + 1}`;
-                                    const contestDate = new Date(contest.ratingUpdateTimeSeconds * 1000).toLocaleDateString();
-                                    return `${contestName} (${contestDate})`;
-                                },
-                                label: function(context) {
-                                    const contest = contestHistory[context.dataIndex];
-                                    return [
-                                        `Rank: ${contest.rank || 'N/A'}`,
-                                        `Rating: ${contest.newRating || 'N/A'}`,
-                                        `Change: ${contest.newRating - contest.oldRating > 0 ? '+' : ''}${contest.newRating - contest.oldRating}`
-                                    ];
-                                }
+                    scales: {
+                        x: {
+                            display: false // Hide x-axis labels
+                        },
+                        y: {
+                            beginAtZero: false,
+                            grid: {
+                                drawBorder: false
                             }
                         }
                     }
                 }
             });
 
-            // Add click event listeners to contest labels
-            setTimeout(() => {
-                const contestLabels = canvas.parentElement.querySelectorAll('.cf-contest-label');
-                contestLabels.forEach((label, index) => {
-                    label.addEventListener('click', () => {
-                        const contest = contestHistory[index];
-                        if (contest && contest.contestId) {
-                            window.open(`https://codeforces.com/contest/${contest.contestId}`, '_blank');
-                        }
-                    });
-                    
-                    // Add hover effect
-                    label.addEventListener('mouseenter', () => {
-                        label.style.color = '#764ba2';
-                        label.style.textDecoration = 'underline';
-                    });
-                    
-                    label.addEventListener('mouseleave', () => {
-                        label.style.color = '#667eea';
-                        label.style.textDecoration = 'underline';
-                    });
-                });
-            }, 100);
+            // Add cursor pointer to indicate clickable points
+            canvas.style.cursor = 'pointer';
 
             console.log('Rating chart created successfully');
         } catch (error) {
             console.error('Error creating rating chart:', error);
         }
     }
+
 
     // Create modal
     function createModal(title, content) {
