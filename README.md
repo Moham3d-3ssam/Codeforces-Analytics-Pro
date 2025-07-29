@@ -27,7 +27,7 @@ A powerful browser extension that provides comprehensive analytics for Codeforce
 ### 📈 Solved Problems
 - Number of solved problems in each topic in this month
 - Number of solved problems in each difficulty level
-<img width="1372" height="850" alt="07" src="https://github.com/user-attachments/assets/a8c0b2ed-e828-462e-bb25-c906fc8f9dd8" />
+<img width="1522" height="862" alt="10" src="https://github.com/user-attachments/assets/e75cc564-4aab-4cca-91b8-ad4e916f5750" />
 <img width="1367" height="860" alt="08" src="https://github.com/user-attachments/assets/3937aa65-bc60-4174-ad7a-4593e4267572" />
 
 ### 🏆 Contest Progress
