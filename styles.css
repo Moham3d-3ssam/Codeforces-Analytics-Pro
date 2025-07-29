@@ -586,6 +586,216 @@
     outline-offset: 2px;
 }
 
+/* Contest Labels in Chart */
+.cf-contest-label {
+    cursor: pointer;
+    text-decoration: underline;
+    color: #667eea;
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+.cf-contest-label:hover {
+    color: #764ba2;
+    text-decoration: underline;
+    transform: scale(1.05);
+}
+
+/* Chart Tooltip Enhancements */
+.chartjs-tooltip {
+    background: rgba(0, 0, 0, 0.9) !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    font-size: 14px !important;
+    color: white !important;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Navigation Header Styles */
+.cf-navigation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
+.cf-nav-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+}
+
+.cf-nav-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.cf-nav-btn:active {
+    transform: translateY(0);
+}
+
+.cf-nav-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+
+.cf-nav-btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.cf-month-title {
+    font-size: 20px;
+    font-weight: 700;
+    color: #333;
+    margin: 0;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Rating Cards Styles */
+.cf-ratings-section {
+    margin: 30px 0;
+}
+
+.cf-ratings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.cf-rating-card {
+    background: white;
+    border-radius: 12px;
+    padding: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    border: 1px solid #e1e5e9;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: slideInUp 0.6s ease forwards;
+}
+
+.cf-rating-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    border-color: #667eea;
+}
+
+.cf-rating-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+}
+
+.cf-rating-level {
+    font-size: 16px;
+    font-weight: 600;
+    color: #333;
+    margin: 0;
+}
+
+.cf-rating-badge {
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.cf-rating-stats {
+    display: flex;
+    justify-content: center;
+}
+
+.cf-rating-stats .cf-stat {
+    text-align: center;
+    padding: 5px 10px;
+    background: #f8f9fa;
+    border-radius: 6px;
+    min-width: 80px;
+}
+
+/* No Data Message */
+.cf-no-data {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 10px 0;
+}
+
+/* Solved Problems Content */
+.cf-solved-problems-content {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Responsive adjustments for navigation */
+@media (max-width: 768px) {
+    .cf-navigation-header {
+        padding: 10px 15px;
+    }
+    
+    .cf-month-title {
+        font-size: 18px;
+    }
+    
+    .cf-nav-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 18px;
+    }
+    
+    .cf-ratings-grid {
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .cf-navigation-header {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .cf-month-title {
+        font-size: 16px;
+    }
+    
+    .cf-ratings-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
 /* Print styles */
 @media print {
     .cf-modal-overlay {

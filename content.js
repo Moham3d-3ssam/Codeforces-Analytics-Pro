@@ -179,6 +179,13 @@
         contestButton.innerHTML = '🏆 Contest Progress';
         contestButton.onclick = showContestModal;
 
+        // Add solved problems button
+        const solvedButton = document.createElement('button');
+        solvedButton.id = 'cf-solved-btn';
+        solvedButton.className = 'cf-analytics-button';
+        solvedButton.innerHTML = '📈 Solved Problems';
+        solvedButton.onclick = showSolvedProblemsModal;
+
         // Find insertion point
         const userInfo = document.querySelector('.main-info') || 
                         document.querySelector('.userbox') ||
@@ -188,6 +195,7 @@
             const buttonContainer = document.createElement('div');
             buttonContainer.className = 'cf-button-container';
             buttonContainer.appendChild(button);
+            buttonContainer.appendChild(solvedButton);
             buttonContainer.appendChild(contestButton);
             userInfo.appendChild(buttonContainer);
         }
@@ -254,6 +262,35 @@
         } catch (error) {
             console.error('Error in showContestModal:', error);
             showErrorModal(`Failed to load contest data: ${error.message}`);
+        }
+    }
+
+    // Show solved problems modal
+    async function showSolvedProblemsModal() {
+        showLoadingModal('Loading solved problems data...');
+        
+        try {
+            const user = getCurrentPageUser();
+            console.log('Current user for solved problems:', user);
+            
+            if (!user) {
+                showErrorModal('Could not detect user. Please navigate to a user profile page.');
+                return;
+            }
+
+            // Ensure SimpleChart is loaded
+            if (!window.Chart) {
+                throw new Error('SimpleChart is not available. Please reload the page.');
+            }
+
+            console.log('Fetching solved problems stats for:', user);
+            const solvedProblemsStats = await fetchSolvedProblemsStats(user);
+            console.log('Solved problems stats received:', solvedProblemsStats);
+            
+            displaySolvedProblemsModal(solvedProblemsStats, user);
+        } catch (error) {
+            console.error('Error in showSolvedProblemsModal:', error);
+            showErrorModal(`Failed to load solved problems data: ${error.message}`);
         }
     }
 
@@ -379,6 +416,172 @@
             }
             
             throw new Error(`Failed to fetch contest data: ${error.message}`);
+        }
+    }
+
+    // Fetch solved problems statistics
+    async function fetchSolvedProblemsStats(handle, monthOffset = 0) {
+        try {
+            console.log(`Fetching solved problems stats for handle: ${handle}, month offset: ${monthOffset}`);
+            
+            // Calculate date range for the specified month
+            const now = new Date();
+            const targetDate = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1);
+            const startOfMonth = new Date(targetDate.getFullYear(), targetDate.getMonth(), 1);
+            const endOfMonth = new Date(targetDate.getFullYear(), targetDate.getMonth() + 1, 0);
+            
+            console.log(`Date range: ${startOfMonth.toISOString()} to ${endOfMonth.toISOString()}`);
+            
+            // Check if target month is in the future
+            if (startOfMonth > now) {
+                throw new Error('Cannot navigate to future months');
+            }
+            
+            // Fetch user info to get registration date
+            const userResponse = await fetch(
+                `https://codeforces.com/api/user.info?handles=${handle}`
+            );
+            
+            if (!userResponse.ok) {
+                throw new Error(`HTTP ${userResponse.status}: ${userResponse.statusText}`);
+            }
+            
+            const userData = await userResponse.json();
+            if (userData.status !== 'OK') {
+                throw new Error(`User info API Error: ${userData.comment || 'Unknown error'}`);
+            }
+            
+            const userInfo = userData.result?.[0];
+            if (!userInfo) {
+                throw new Error('User not found');
+            }
+            
+            // Get user registration date (convert from seconds to milliseconds)
+            const registrationDate = new Date(userInfo.registrationTimeSeconds * 1000);
+            console.log('User registration date:', registrationDate);
+            
+            // Check if target month is before user registration
+            const targetYear = startOfMonth.getFullYear();
+            const targetMonth = startOfMonth.getMonth();
+            const regYear = registrationDate.getFullYear();
+            const regMonth = registrationDate.getMonth();
+            
+            if (targetYear < regYear || (targetYear === regYear && targetMonth < regMonth)) {
+                throw new Error('Cannot navigate to months before user registration');
+            }
+            
+            // Fetch submissions
+            const submissionsResponse = await fetch(
+                `https://codeforces.com/api/user.status?handle=${handle}&from=1&count=10000`
+            );
+            
+            if (!submissionsResponse.ok) {
+                throw new Error(`HTTP ${submissionsResponse.status}: ${submissionsResponse.statusText}`);
+            }
+            
+            const submissionsData = await submissionsResponse.json();
+            console.log('Submissions API response:', submissionsData);
+            
+            if (submissionsData.status !== 'OK') {
+                throw new Error(`Submissions API Error: ${submissionsData.comment || 'Unknown error'}`);
+            }
+
+            const submissions = submissionsData.result || [];
+            console.log(`Processing ${submissions.length} submissions for solved problems analysis`);
+            
+            // Filter submissions by date and get solved problems
+            const solvedProblems = new Set();
+            const topicStats = {};
+            const ratingStats = {};
+            
+            // Initialize topic stats
+            ALL_TOPICS.forEach(topic => {
+                topicStats[topic] = {
+                    solved: 0,
+                    totalSolved: 0,
+                    total: TOPIC_PROBLEM_COUNTS[topic] || 0
+                };
+            });
+            
+            // Initialize rating stats
+            for (let rating = 800; rating <= 3500; rating += 100) {
+                ratingStats[rating] = 0;
+            }
+            
+            // First pass: Calculate total solved problems for each topic (all time)
+            const allTimeSolvedProblems = new Set();
+            submissions.forEach(submission => {
+                if (submission.verdict === 'OK') {
+                    const problem = submission.problem;
+                    const problemKey = `${problem.contestId}-${problem.index}`;
+                    
+                    if (!allTimeSolvedProblems.has(problemKey)) {
+                        allTimeSolvedProblems.add(problemKey);
+                        
+                        // Count total solved by topic
+                        if (problem.tags) {
+                            problem.tags.forEach(tag => {
+                                if (topicStats[tag]) {
+                                    topicStats[tag].totalSolved++;
+                                }
+                            });
+                        }
+                    }
+                }
+            });
+
+            // Second pass: Calculate solved problems for the specific month
+            submissions.forEach(submission => {
+                const submissionTime = new Date(submission.creationTimeSeconds * 1000);
+                
+                // Check if submission is within the target month
+                if (submissionTime >= startOfMonth && submissionTime <= endOfMonth) {
+                    if (submission.verdict === 'OK') {
+                        const problem = submission.problem;
+                        const problemKey = `${problem.contestId}-${problem.index}`;
+                        
+                        if (!solvedProblems.has(problemKey)) {
+                            solvedProblems.add(problemKey);
+                            
+                            // Count by topic
+                            if (problem.tags) {
+                                problem.tags.forEach(tag => {
+                                    if (topicStats[tag]) {
+                                        topicStats[tag].solved++;
+                                    }
+                                });
+                            }
+                            
+                            // Count by rating
+                            if (problem.rating) {
+                                const ratingLevel = Math.floor(problem.rating / 100) * 100;
+                                if (ratingStats[ratingLevel] !== undefined) {
+                                    ratingStats[ratingLevel]++;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Filter topics and ratings that have at least one solved problem
+            const solvedTopics = Object.entries(topicStats).filter(([_, stats]) => stats.solved > 0);
+            const solvedRatings = Object.entries(ratingStats).filter(([_, count]) => count > 0);
+            
+            const result = {
+                totalSolved: solvedProblems.size,
+                topicStats: Object.fromEntries(solvedTopics),
+                ratingStats: Object.fromEntries(solvedRatings),
+                monthOffset: monthOffset,
+                monthName: targetDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long' })
+            };
+            
+            console.log('Solved problems analysis result:', result);
+            return result;
+            
+        } catch (error) {
+            console.error('Error in fetchSolvedProblemsStats:', error);
+            throw new Error(`Failed to fetch solved problems data: ${error.message}`);
         }
     }
 
@@ -535,6 +738,18 @@
         }
         
         const modal = createModal(`🏆 Contest Progress for ${user}`, createContestContent(contestStats));
+        document.body.appendChild(modal);
+    }
+
+    // Display solved problems modal
+    function displaySolvedProblemsModal(solvedProblemsStats, user) {
+        // Remove any existing modal
+        const existingModal = document.querySelector('.cf-modal-overlay');
+        if (existingModal) {
+            document.body.removeChild(existingModal);
+        }
+        
+        const modal = createModal(`📈 Solved Problems for ${user}`, createSolvedProblemsContent(solvedProblemsStats));
         document.body.appendChild(modal);
     }
 
@@ -794,7 +1009,226 @@
         return container;
     }
 
+    // Create solved problems content
+    function createSolvedProblemsContent(solvedProblemsStats) {
+        const container = document.createElement('div');
+        container.className = 'cf-solved-problems-content';
 
+        // Navigation header
+        const navigationHeader = document.createElement('div');
+        navigationHeader.className = 'cf-navigation-header';
+        navigationHeader.innerHTML = `
+            <button class="cf-nav-btn" id="cf-prev-month">‹</button>
+            <h3 class="cf-month-title">${solvedProblemsStats.monthName}</h3>
+            <button class="cf-nav-btn" id="cf-next-month">›</button>
+        `;
+
+        // Add event listeners for navigation buttons
+        const prevBtn = navigationHeader.querySelector('#cf-prev-month');
+        const nextBtn = navigationHeader.querySelector('#cf-next-month');
+        
+        prevBtn.addEventListener('click', () => changeMonth(-1));
+        nextBtn.addEventListener('click', () => changeMonth(1));
+        
+        // Check and disable navigation buttons based on restrictions
+        checkNavigationRestrictions(solvedProblemsStats, prevBtn, nextBtn);
+
+        const summary = document.createElement('div');
+        summary.className = 'cf-summary';
+        summary.innerHTML = `
+            <div class="cf-summary-item">
+                <span class="cf-label">Problems Solved:</span>
+                <span class="cf-value">${solvedProblemsStats.totalSolved}</span>
+            </div>
+        `;
+
+        // Topics section
+        const topicsSection = document.createElement('div');
+        topicsSection.className = 'cf-topics-section';
+        topicsSection.innerHTML = `
+            <h3 class="cf-section-title">🎯 Solved Topics (${Object.keys(solvedProblemsStats.topicStats).length})</h3>
+            <div class="cf-topics-grid" id="cf-solved-topics-month"></div>
+        `;
+
+        // Ratings section
+        const ratingsSection = document.createElement('div');
+        ratingsSection.className = 'cf-ratings-section';
+        ratingsSection.innerHTML = `
+            <h3 class="cf-section-title">📊 Solved by Rating (${Object.keys(solvedProblemsStats.ratingStats).length})</h3>
+            <div class="cf-ratings-grid" id="cf-solved-ratings-month"></div>
+        `;
+
+        container.appendChild(navigationHeader);
+        container.appendChild(summary);
+        container.appendChild(topicsSection);
+        container.appendChild(ratingsSection);
+
+        // Store current stats for navigation
+        window.currentSolvedProblemsStats = solvedProblemsStats;
+
+        setTimeout(() => {
+            populateSolvedTopicsMonth(solvedProblemsStats.topicStats);
+            populateSolvedRatingsMonth(solvedProblemsStats.ratingStats);
+        }, 100);
+
+        return container;
+    }
+
+    // Populate solved topics for the month
+    function populateSolvedTopicsMonth(topicStats) {
+        const container = document.getElementById('cf-solved-topics-month');
+        if (!container) return;
+
+        const sortedTopics = Object.entries(topicStats).sort(([, a], [, b]) => b.solved - a.solved);
+
+        if (sortedTopics.length === 0) {
+            container.innerHTML = '<p class="cf-no-data">No problems solved in any topic this month.</p>';
+            return;
+        }
+
+        sortedTopics.forEach(([topicName, topicData], index) => {
+            const topicCard = document.createElement('div');
+            topicCard.className = 'cf-topic-card cf-solved-card';
+            topicCard.style.animationDelay = `${index * 50}ms`;
+            
+            topicCard.innerHTML = `
+                <div class="cf-topic-header">
+                    <h4 class="cf-topic-name">${topicName}</h4>
+                    <span class="cf-topic-badge">${topicData.solved}</span>
+                </div>
+                <div class="cf-topic-stats">
+                    <div class="cf-stat">
+                        <span class="cf-stat-label">This Month:</span>
+                        <span class="cf-stat-value">${topicData.solved}</span>
+                    </div>
+                    <div class="cf-stat">
+                        <span class="cf-stat-label">Total Solved:</span>
+                        <span class="cf-stat-value">${topicData.totalSolved || 0}</span>
+                    </div>
+                    <div class="cf-stat">
+                        <span class="cf-stat-label">Total in CF:</span>
+                        <span class="cf-stat-value">${topicData.total}</span>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(topicCard);
+        });
+    }
+
+    // Populate solved ratings for the month
+    function populateSolvedRatingsMonth(ratingStats) {
+        const container = document.getElementById('cf-solved-ratings-month');
+        if (!container) return;
+
+        const sortedRatings = Object.entries(ratingStats).sort(([a], [b]) => parseInt(a) - parseInt(b));
+
+        if (sortedRatings.length === 0) {
+            container.innerHTML = '<p class="cf-no-data">No problems solved in any rating level this month.</p>';
+            return;
+        }
+
+        sortedRatings.forEach(([rating, count], index) => {
+            const ratingCard = document.createElement('div');
+            ratingCard.className = 'cf-rating-card';
+            ratingCard.style.animationDelay = `${index * 50}ms`;
+            
+            ratingCard.innerHTML = `
+                <div class="cf-rating-header">
+                    <h4 class="cf-rating-level">${rating}</h4>
+                    <span class="cf-rating-badge">${count}</span>
+                </div>
+                <div class="cf-rating-stats">
+                    <div class="cf-stat">
+                        <span class="cf-stat-label">Solved:</span>
+                        <span class="cf-stat-value">${count}</span>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(ratingCard);
+        });
+    }
+
+    // Function for month navigation
+    async function changeMonth(direction) {
+        const currentStats = window.currentSolvedProblemsStats;
+        if (!currentStats) return;
+
+        const newMonthOffset = currentStats.monthOffset + direction;
+        const user = getCurrentPageUser();
+        
+        if (!user) {
+            showErrorModal('Could not detect user.');
+            return;
+        }
+
+        showLoadingModal('Loading data for selected month...');
+        
+        try {
+            const newStats = await fetchSolvedProblemsStats(user, newMonthOffset);
+            displaySolvedProblemsModal(newStats, user);
+        } catch (error) {
+            console.error('Error changing month:', error);
+            
+            // Check if it's a navigation restriction error
+            if (error.message.includes('future months') || error.message.includes('before user registration')) {
+                // Don't show error modal for navigation restrictions, just return silently
+                return;
+            } else {
+                showErrorModal(`Failed to load data: ${error.message}`);
+            }
+        }
+    }
+
+    // Check and disable navigation buttons based on restrictions
+    async function checkNavigationRestrictions(currentStats, prevBtn, nextBtn) {
+        const user = getCurrentPageUser();
+        if (!user) return;
+
+        try {
+            // Check if next month would be in the future
+            const now = new Date();
+            const nextMonthDate = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+            if (nextMonthDate > now) {
+                nextBtn.disabled = true;
+                nextBtn.style.opacity = '0.5';
+                nextBtn.style.cursor = 'not-allowed';
+                nextBtn.title = 'Cannot navigate to future months';
+            }
+
+            // Check if previous month would be before user registration
+            const userResponse = await fetch(`https://codeforces.com/api/user.info?handles=${user}`);
+            if (userResponse.ok) {
+                const userData = await userResponse.json();
+                if (userData.status === 'OK' && userData.result?.[0]) {
+                    const registrationDate = new Date(userData.result[0].registrationTimeSeconds * 1000);
+                    
+                    // Calculate the target month for the previous button
+                    const currentMonthOffset = currentStats.monthOffset || 0;
+                    const prevMonthOffset = currentMonthOffset - 1;
+                    const targetDate = new Date(now.getFullYear(), now.getMonth() + prevMonthOffset, 1);
+                    
+                    // Check if the target month is before user registration
+                    // We need to check if the target month is strictly before the registration month
+                    const targetYear = targetDate.getFullYear();
+                    const targetMonth = targetDate.getMonth();
+                    const regYear = registrationDate.getFullYear();
+                    const regMonth = registrationDate.getMonth();
+                    
+                    // Disable if target month is before registration month
+                    if (targetYear < regYear || (targetYear === regYear && targetMonth < regMonth)) {
+                        prevBtn.disabled = true;
+                        prevBtn.style.opacity = '0.5';
+                        prevBtn.style.cursor = 'not-allowed';
+                        prevBtn.title = 'Cannot navigate before user registration';
+                    }
+                }
+            }
+        } catch (error) {
+            console.error('Error checking navigation restrictions:', error);
+        }
+    }
 
     // Create rating progress chart
     function createRatingChart(contestHistory) {
@@ -814,11 +1248,25 @@
             const chart = new Chart(canvas, {
                 type: 'line',
                 data: {
-                    labels: contestHistory.map((_, index) => `${index + 1}`),
+                    labels: contestHistory.map((contest, index) => {
+                        // Create clickable contest name with hover effect
+                        const contestName = contest.contestName || `Contest ${index + 1}`;
+                        const contestDate = new Date(contest.ratingUpdateTimeSeconds * 1000).toLocaleDateString();
+                        const rank = contest.rank || 'N/A';
+                        const rating = contest.newRating || 'N/A';
+                        
+                        return `<span class="cf-contest-label" 
+                                   data-contest-id="${contest.contestId}" 
+                                   data-contest-name="${contestName}"
+                                   data-contest-date="${contestDate}"
+                                   data-contest-rank="${rank}"
+                                   data-contest-rating="${rating}"
+                                   style="cursor: pointer; text-decoration: underline; color: #667eea;">
+                                   ${contestName}
+                               </span>`;
+                    }),
                     datasets: [{
                         label: 'Rating',
-                        // --- THIS IS THE CHANGE ---
-                        // Pass the entire contest history object for each data point
                         data: contestHistory,
                         borderColor: 'rgba(75, 192, 192, 1)',
                         backgroundColor: 'rgba(75, 192, 192, 0.2)',
@@ -836,9 +1284,54 @@
                         y: {
                             beginAtZero: false
                         }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                title: function(context) {
+                                    const contest = contestHistory[context[0].dataIndex];
+                                    const contestName = contest.contestName || `Contest ${context[0].dataIndex + 1}`;
+                                    const contestDate = new Date(contest.ratingUpdateTimeSeconds * 1000).toLocaleDateString();
+                                    return `${contestName} (${contestDate})`;
+                                },
+                                label: function(context) {
+                                    const contest = contestHistory[context.dataIndex];
+                                    return [
+                                        `Rank: ${contest.rank || 'N/A'}`,
+                                        `Rating: ${contest.newRating || 'N/A'}`,
+                                        `Change: ${contest.newRating - contest.oldRating > 0 ? '+' : ''}${contest.newRating - contest.oldRating}`
+                                    ];
+                                }
+                            }
+                        }
                     }
                 }
             });
+
+            // Add click event listeners to contest labels
+            setTimeout(() => {
+                const contestLabels = canvas.parentElement.querySelectorAll('.cf-contest-label');
+                contestLabels.forEach((label, index) => {
+                    label.addEventListener('click', () => {
+                        const contest = contestHistory[index];
+                        if (contest && contest.contestId) {
+                            window.open(`https://codeforces.com/contest/${contest.contestId}`, '_blank');
+                        }
+                    });
+                    
+                    // Add hover effect
+                    label.addEventListener('mouseenter', () => {
+                        label.style.color = '#764ba2';
+                        label.style.textDecoration = 'underline';
+                    });
+                    
+                    label.addEventListener('mouseleave', () => {
+                        label.style.color = '#667eea';
+                        label.style.textDecoration = 'underline';
+                    });
+                });
+            }, 100);
+
             console.log('Rating chart created successfully');
         } catch (error) {
             console.error('Error creating rating chart:', error);
