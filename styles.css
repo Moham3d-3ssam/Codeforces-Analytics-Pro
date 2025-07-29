@@ -120,7 +120,8 @@
 
 /* Content Styles */
 .cf-analytics-content,
-.cf-contest-content {
+.cf-contest-content,
+.cf-solved-problems-content {
     display: flex;
     flex-direction: column;
     gap: 30px;
@@ -342,73 +343,8 @@
     border-radius: 12px;
 }
 
-/* Topic Details Modal */
-.cf-topic-modal {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 10001;
-    animation: fadeIn 0.3s ease;
-}
-
-.cf-topic-modal-content {
-    background: white;
-    border-radius: 16px;
-    padding: 30px;
-    max-width: 500px;
-    width: 90%;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-    animation: slideIn 0.3s ease;
-}
-
-.cf-topic-modal-content h3 {
-    margin: 0 0 20px 0;
-    font-size: 24px;
-    color: #333;
-    text-align: center;
-}
-
-.cf-topic-details {
-    margin-bottom: 20px;
-}
-
-.cf-detail-row {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px 0;
-    border-bottom: 1px solid #e1e5e9;
-}
-
-.cf-detail-row:last-child {
-    border-bottom: none;
-}
-
-.cf-close-topic-modal {
-    width: 100%;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border: none;
-    padding: 12px 24px;
-    border-radius: 8px;
-    font-size: 16px;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
-
-.cf-close-topic-modal:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
-}
-
-/* Loading Styles */
-.cf-loading {
+/* Loading & Error Styles */
+.cf-loading, .cf-error {
     text-align: center;
     padding: 40px;
 }
@@ -435,12 +371,6 @@
     font-weight: 500;
 }
 
-/* Error Styles */
-.cf-error {
-    text-align: center;
-    padding: 40px;
-}
-
 .cf-error p {
     font-size: 18px;
     color: #e74c3c;
@@ -465,247 +395,87 @@
     box-shadow: 0 6px 20px rgba(231, 76, 60, 0.4);
 }
 
-/* Responsive Design */
-@media (max-width: 1024px) {
-    .cf-modal {
-        width: 90vw;
-        margin: 20px;
-    }
-    
-    .cf-charts-container {
-        grid-template-columns: 1fr;
-    }
-    
-    .cf-modal-body {
-        padding: 20px;
-    }
-    
-    .cf-summary {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 768px) {
-    .cf-button-container {
-        flex-direction: column;
-    }
-    
-    .cf-analytics-button {
-        width: 100%;
-        justify-content: center;
-    }
-    
-    .cf-modal {
-        width: 95vw;
-        margin: 10px;
-    }
-    
-    .cf-modal-header {
-        padding: 15px 20px;
-    }
-    
-    .cf-modal-header h2 {
-        font-size: 20px;
-    }
-    
-    .cf-modal-body {
-        padding: 15px;
-    }
-    
-    .cf-chart-container {
-        padding: 15px;
-    }
-}
-
-@media (max-width: 480px) {
-    .cf-modal {
-        width: 100vw;
-        height: 100vh;
-        border-radius: 0;
-        margin: 0;
-    }
-    
-    .cf-modal-body {
-        max-height: calc(100vh - 80px);
-    }
-    
-    .cf-value {
-        font-size: 24px;
-    }
-    
-    .cf-summary-item {
-        padding: 15px;
-    }
-}
-
-/* Scrollbar Styles */
-.cf-modal-body::-webkit-scrollbar {
-    width: 8px;
-}
-
-.cf-modal-body::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 4px;
-}
-
-.cf-modal-body::-webkit-scrollbar-thumb {
-    background: #c1c1c1;
-    border-radius: 4px;
-}
-
-.cf-modal-body::-webkit-scrollbar-thumb:hover {
-    background: #a8a8a8;
-}
-
-/* Animation for better UX */
-.cf-chart-container {
-    opacity: 0;
-    animation: slideUp 0.5s ease forwards;
-}
-
-.cf-chart-container:nth-child(1) { animation-delay: 0.1s; }
-.cf-chart-container:nth-child(2) { animation-delay: 0.2s; }
-.cf-chart-container:nth-child(3) { animation-delay: 0.3s; }
-
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(20px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* Focus and accessibility */
-.cf-analytics-button:focus,
-.cf-close-btn:focus,
-.cf-retry-btn:focus {
-    outline: 2px solid #667eea;
-    outline-offset: 2px;
-}
-
-/* Contest Labels in Chart */
-.cf-contest-label {
-    cursor: pointer;
-    text-decoration: underline;
-    color: #667eea;
-    transition: all 0.3s ease;
-    font-weight: 600;
-}
-
-.cf-contest-label:hover {
-    color: #764ba2;
-    text-decoration: underline;
-    transform: scale(1.05);
-}
-
-/* Chart Tooltip Enhancements */
-.chartjs-tooltip {
-    background: rgba(0, 0, 0, 0.9) !important;
-    border-radius: 8px !important;
-    padding: 12px !important;
-    font-size: 14px !important;
-    color: white !important;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3) !important;
-}
-
-/* Custom Contest Tooltip */
-.cf-custom-tooltip {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    border-radius: 12px;
-    padding: 16px;
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-    font-family: Arial, sans-serif;
-    font-size: 14px;
-    min-width: 200px;
-    max-width: 280px;
-    animation: tooltipFadeIn 0.3s ease;
-}
-
-@keyframes tooltipFadeIn {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-.cf-tooltip-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-    padding-bottom: 8px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-}
-
-.cf-tooltip-title {
-    font-weight: 700;
-    font-size: 16px;
-    color: white;
-}
-
-.cf-tooltip-date {
-    font-size: 12px;
-    opacity: 0.8;
-}
-
-.cf-tooltip-content {
-    margin-bottom: 12px;
-}
-
-.cf-tooltip-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 6px;
-}
-
-.cf-tooltip-label {
-    font-weight: 600;
-    opacity: 0.9;
-}
-
-.cf-tooltip-value {
-    font-weight: 700;
-}
-
-.cf-tooltip-value.cf-positive {
-    color: #4ade80;
-}
-
-.cf-tooltip-value.cf-negative {
-    color: #f87171;
-}
-
-.cf-tooltip-footer {
+/* No Data Message */
+.cf-no-data {
     text-align: center;
-}
-
-.cf-tooltip-hint {
-    font-size: 11px;
-    opacity: 0.7;
+    color: #666;
     font-style: italic;
-    text-align: center;
-    color: rgba(255, 255, 255, 0.8);
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    margin: 10px 0;
 }
 
-/* Navigation Header Styles */
+/* -- SOLVED PROBLEMS & CALENDAR STYLES -- */
+
 .cf-navigation-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    padding: 15px 20px;
+    background: #f8f9fa;
+    padding: 10px;
     border-radius: 12px;
     margin-bottom: 20px;
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.cf-month-display {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.cf-calendar-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 20px;
+    padding: 5px;
+    border-radius: 50%;
+    transition: background-color 0.2s;
+}
+
+.cf-calendar-btn:hover {
+    background-color: #e9ecef;
+}
+
+.cf-calendar-popup {
+    display: none; /* Hidden by default */
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    margin-top: 10px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+    z-index: 10001;
+    padding: 15px;
+    border: 1px solid #dee2e6;
+    width: max-content;
+}
+
+.cf-calendar-controls {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 10px;
+}
+
+.cf-calendar-popup select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    font-size: 14px;
+    background-color: #f8f9fa;
+    cursor: pointer;
+}
+
+.cf-calendar-popup .cf-analytics-button {
+    width: 100%;
+    justify-content: center;
+    padding: 10px 15px;
+    font-size: 14px;
 }
 
 .cf-nav-btn {
@@ -731,21 +501,11 @@
     background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
 }
 
-.cf-nav-btn:active {
-    transform: translateY(0);
-}
-
 .cf-nav-btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
     transform: none;
     box-shadow: none;
-}
-
-.cf-nav-btn:disabled:hover {
-    transform: none;
-    box-shadow: none;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
 }
 
 .cf-month-title {
@@ -756,12 +516,6 @@
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-/* Rating Cards Styles */
-.cf-ratings-section {
-    margin: 30px 0;
 }
 
 .cf-ratings-grid {
@@ -826,77 +580,309 @@
     min-width: 80px;
 }
 
-/* No Data Message */
-.cf-no-data {
-    text-align: center;
-    color: #666;
-    font-style: italic;
-    padding: 20px;
-    background: #f8f9fa;
-    border-radius: 8px;
-    margin: 10px 0;
+/* Motivation Card Styles */
+.cf-motivation-section {
+    margin: 20px 0;
 }
 
-/* Solved Problems Content */
-.cf-solved-problems-content {
+.cf-motivation-card {
+    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+    border-radius: 16px;
+    padding: 25px;
+    border-left: 5px solid #667eea;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    animation: slideInUp 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+.cf-motivation-card h4 {
+    margin: 0 0 15px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.cf-motivation-card p {
+    margin: 10px 0;
+    line-height: 1.6;
+    color: #555;
+    font-size: 15px;
+}
+
+.cf-motivation-card strong {
+    color: #333;
+    font-weight: 600;
+}
+
+.cf-motivation-card p:last-child {
+    margin-bottom: 0;
+    font-style: italic;
+    color: #666;
+}
+
+/* Compact Motivation Section */
+.cf-motivation-section-compact {
+    margin: 2px 0;
+}
+
+.cf-motivation-section-compact .cf-motivation-card {
+    margin: 2px 0;
+    padding: 10px;
+    background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+    border-left: 4px solid #2196f3;
+}
+
+/* Best Month Card Styles */
+.cf-best-month-section {
+    margin: 20px 0;
+}
+
+.cf-best-month-card {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-radius: 16px;
+    padding: 25px;
+    border-left: 5px solid #28a745;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    margin: 20px 0;
+    animation: slideInUp 0.6s ease forwards;
+    opacity: 0;
+    transform: translateY(20px);
+}
+
+/* Compact Best Month Card */
+.cf-best-month-section-compact {
+    margin: 8px 0;
+}
+
+.cf-best-month-card-compact {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    border-radius: 8px;
+    padding: 8px 12px;
+    border-left: 3px solid #28a745;
+    font-size: 13px;
+    font-weight: 500;
+    color: #155724;
+    text-align: center;
+}
+
+.cf-best-month-card h4 {
+    margin: 0 0 15px 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #155724;
+    background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.cf-best-month-card p {
+    margin: 10px 0;
+    line-height: 1.6;
+    color: #155724;
+    font-size: 15px;
+}
+
+.cf-best-month-card strong {
+    color: #0f5132;
+    font-weight: 600;
+}
+
+.cf-best-month-card p:last-child {
+    margin-bottom: 0;
+    font-style: italic;
+    color: #0f5132;
+}
+
+/* Clickable Cards Styles */
+.cf-clickable {
+    cursor: pointer;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.cf-clickable:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(0, 0, 0, 0.2);
+    border-color: #667eea;
+}
+
+.cf-click-hint {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(102, 126, 234, 0.9);
+    color: white;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    pointer-events: none;
+    z-index: 10;
+}
+
+.cf-clickable:hover .cf-click-hint {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.05);
+}
+
+/* Problems Popup Styles */
+.cf-problems-popup-content {
+    max-width: 600px;
+    max-height: 70vh;
+    overflow-y: auto;
+}
+
+.cf-problems-header {
+    text-align: center;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.cf-problems-header h3 {
+    margin: 0 0 10px 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.cf-problems-header p {
+    margin: 0;
+    color: #666;
+    font-size: 16px;
+}
+
+.cf-problems-list {
     display: flex;
     flex-direction: column;
-    gap: 25px;
+    gap: 10px;
 }
 
-/* Responsive adjustments for navigation */
-@media (max-width: 768px) {
-    .cf-navigation-header {
-        padding: 10px 15px;
-    }
-    
-    .cf-month-title {
-        font-size: 18px;
-    }
-    
-    .cf-nav-btn {
-        width: 35px;
-        height: 35px;
-        font-size: 18px;
-    }
-    
-    .cf-ratings-grid {
-        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-        gap: 10px;
-    }
+.cf-problem-item {
+    background: #f8f9fa;
+    border-radius: 8px;
+    padding: 12px;
+    border: 1px solid #e9ecef;
+    transition: all 0.2s ease;
 }
 
-@media (max-width: 480px) {
-    .cf-navigation-header {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .cf-month-title {
-        font-size: 16px;
-    }
-    
-    .cf-ratings-grid {
-        grid-template-columns: 1fr;
-    }
+.cf-problem-item:hover {
+    background: #e9ecef;
+    border-color: #667eea;
+    transform: translateX(5px);
 }
 
-/* Print styles */
-@media print {
-    .cf-modal-overlay {
-        position: static;
-        background: none;
-        backdrop-filter: none;
-    }
-    
-    .cf-modal {
-        box-shadow: none;
-        max-width: none;
-        max-height: none;
-    }
-    
-    .cf-modal-header {
-        background: #667eea !important;
-        -webkit-print-color-adjust: exact;
-    }
+.cf-problem-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+}
+
+.cf-problem-name {
+    flex: 1;
+}
+
+.cf-problem-link {
+    color: #333;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: 14px;
+    line-height: 1.4;
+    transition: color 0.2s ease;
+}
+
+.cf-problem-link:hover {
+    color: #667eea;
+    text-decoration: underline;
+}
+
+.cf-problem-rating {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 4px 8px;
+    border-radius: 12px;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 50px;
+    text-align: center;
+}
+
+/* Detailed Problems View Styles */
+.cf-problems-detailed-content {
+    max-width: 1000px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.cf-problems-detailed-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding-bottom: 15px;
+    border-bottom: 2px solid #e9ecef;
+}
+
+.cf-back-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cf-back-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+}
+
+.cf-problems-detailed-header h3 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: #333;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.cf-problems-summary {
+    font-size: 16px;
+    color: #666;
+    font-weight: 500;
+}
+
+.cf-problems-columns {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+}
+
+.cf-problems-column h4 {
+    margin: 0 0 15px 0;
+    font-size: 18px;
+    font-weight: 600;
+    color: #333;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #e9ecef;
 }
