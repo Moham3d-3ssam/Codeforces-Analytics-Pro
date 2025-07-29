@@ -8,8 +8,9 @@ A powerful browser extension that provides comprehensive analytics for Codeforce
 - **Accuracy Analysis**: Calculate success rate for each of the 36 problem topics
 - **Problem Distribution**: Visual breakdown of solved vs available problems by topic
 - **First Attempt Success**: Track problems solved on first try
+- **Analytics About Each Month**: Number of solved problems in each tag and in each difficulty level
 - **Real-time Data**: Problem counts fetched live from Codeforces API
-<img width="1125" height="553" alt="01" src="https://github.com/user-attachments/assets/67c30e6a-143b-46a3-881b-c43b89649c05" />
+<img width="1112" height="592" alt="06" src="https://github.com/user-attachments/assets/c0361440-5e76-486f-a8c9-1408e374f4f8" />
 
 ### 🎯 All 36 Topics Covered
 - 2-sat, binary search, bitmasks, brute force, chinese remainder theorem
@@ -22,6 +23,12 @@ A powerful browser extension that provides comprehensive analytics for Codeforce
 <img width="1516" height="852" alt="02" src="https://github.com/user-attachments/assets/b4092319-8924-4ac5-8e66-7833d6d3b5d2" />
 <img width="1520" height="856" alt="03" src="https://github.com/user-attachments/assets/0c415061-b3bc-4434-80e7-70b629c25d64" />
 <img width="1517" height="856" alt="04" src="https://github.com/user-attachments/assets/4ce4ae2b-b4c3-4fef-873a-2d8ebfc4b5af" />
+
+### 📈 Analytics About Each Month
+- Number of solved problems in each topic in this month
+- Number of solved problems in each difficulty level
+<img width="1372" height="850" alt="07" src="https://github.com/user-attachments/assets/a8c0b2ed-e828-462e-bb25-c906fc8f9dd8" />
+<img width="1367" height="860" alt="08" src="https://github.com/user-attachments/assets/3937aa65-bc60-4174-ad7a-4593e4267572" />
 
 ### 🏆 Contest Progress
 - **Rating History**: Interactive chart showing rating progression over time
