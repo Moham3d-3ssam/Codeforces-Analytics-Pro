@@ -1,4 +1,4 @@
-🔍 Codeforces Analytics Pro
+# 🔍 Codeforces Analytics Pro
 
 A powerful browser extension that provides comprehensive analytics for Codeforces users, including topic-wise accuracy tracking, contest progress analysis, and performance insights.
 
