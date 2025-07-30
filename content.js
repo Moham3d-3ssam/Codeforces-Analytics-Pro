@@ -699,6 +699,58 @@
     // Store analytics modal reference for topic details
     let analyticsModalOverlay = null;
     
+    // Show solved problems details modal
+    function showSolvedProblemsDetails(name, problems, type) {
+        const content = document.createElement('div');
+        content.className = 'cf-solved-problems-details-content';
+        
+        const title = type === 'topic' ? `${name} - Solved Problems` : `Rating ${name} - Solved Problems`;
+        
+        content.innerHTML = `
+            <div class="cf-solved-problems-details-stats">
+                <div class="cf-solved-problems-stat-item">
+                    <span class="cf-solved-problems-stat-label">Problems Solved:</span>
+                    <span class="cf-solved-problems-stat-value">${problems.length}</span>
+                </div>
+            </div>
+            <div class="cf-solved-problems-list">
+                ${problems.map(problem => `
+                    <div class="cf-solved-problem-item">
+                        <a href="${problem.url}" target="_blank" class="cf-solved-problem-link">
+                            ${problem.contestId}${problem.index} - ${problem.name}
+                        </a>
+                        ${problem.rating ? `<span class="cf-solved-problem-rating">${problem.rating}</span>` : ''}
+                    </div>
+                `).join('')}
+            </div>
+            <div class="cf-solved-problems-details-actions">
+                <button class="cf-solved-problems-close-btn" id="cf-solved-problems-close-btn">Close</button>
+            </div>
+        `;
+        
+        // Create modal and add event listener
+        const modal = createTopicDetailsModal(`📋 ${title}`, content);
+        document.body.appendChild(modal);
+        
+        // Add event listener after modal is added to DOM
+        const closeBtn = document.getElementById('cf-solved-problems-close-btn');
+        if (closeBtn) {
+            closeBtn.addEventListener('click', () => {
+                closeSolvedProblemsDetails();
+            });
+        }
+    }
+    
+    // Close solved problems details modal
+    function closeSolvedProblemsDetails() {
+        // Remove only the solved problems details modal (the last modal overlay)
+        const modalOverlays = document.querySelectorAll('.cf-modal-overlay');
+        if (modalOverlays.length > 0) {
+            const lastModal = modalOverlays[modalOverlays.length - 1];
+            lastModal.remove();
+        }
+    }
+    
     // Make closeTopicDetails globally accessible
     window.closeTopicDetails = closeTopicDetails;
     
@@ -1044,6 +1096,10 @@
                 </div>
             `;
             
+            // Make topic card clickable
+            topicCard.addEventListener('click', () => showSolvedProblemsDetails(topicName, topicData.problems, 'topic'));
+            topicCard.style.cursor = 'pointer';
+            
             container.appendChild(topicCard);
         });
     }
@@ -1074,6 +1130,10 @@
                     <div class="cf-stat"><span class="cf-stat-label">Solved:</span><span class="cf-stat-value">${ratingData.count}</span></div>
                 </div>
             `;
+            
+            // Make rating card clickable
+            ratingCard.addEventListener('click', () => showSolvedProblemsDetails(rating, ratingData.problems, 'rating'));
+            ratingCard.style.cursor = 'pointer';
             
             container.appendChild(ratingCard);
         });
