@@ -886,3 +886,100 @@
     padding-bottom: 8px;
     border-bottom: 2px solid #e9ecef;
 }
+
+/* Topic Details Modal Styles */
+.cf-topic-details-content {
+    padding: 30px;
+    max-width: 350px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.cf-topic-details-stats {
+    margin-bottom: 30px;
+}
+
+.cf-topic-stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid #e9ecef;
+    font-size: 15px;
+    margin-bottom: 6px;
+}
+
+.cf-topic-stat-item:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.cf-topic-stat-label {
+    font-weight: 500;
+    color: #666;
+    text-align: left;
+}
+
+.cf-topic-stat-value {
+    font-weight: 600;
+    color: #333;
+    text-align: right;
+}
+
+.cf-topic-details-actions {
+    text-align: center;
+    margin-top: 15px;
+}
+
+.cf-topic-close-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    padding: 12px 35px;
+    font-size: 15px;
+    font-weight: 600;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+    min-width: 100px;
+}
+
+.cf-topic-close-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+    background: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+}
+
+.cf-topic-close-btn:active {
+    transform: translateY(0);
+}
+
+/* Compact Topic Details Modal */
+.cf-topic-details-modal {
+    max-width: 400px !important;
+    width: auto !important;
+    min-width: 350px;
+    z-index: 10001 !important;
+}
+
+.cf-topic-details-body {
+    padding: 0 !important;
+}
+
+/* Enhanced overlay for topic details */
+.cf-modal-overlay {
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(3px);
+    z-index: 10000 !important;
+}
+
+/* Compact header for topic details */
+.cf-topic-details-header {
+    padding: 15px 20px !important;
+}
+
+.cf-topic-details-header h2 {
+    font-size: 18px !important;
+    margin: 0 !important;
+}
