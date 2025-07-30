@@ -1,4 +1,4 @@
-# 🔍 Codeforces Analytics Pro
+<img width="1855" height="847" alt="11" src="https://github.com/user-attachments/assets/b093659d-7383-4dca-b157-cb7097bbf424" /># 🔍 Codeforces Analytics Pro
 
 A powerful browser extension that provides comprehensive analytics for Codeforces users, including topic-wise accuracy tracking, contest progress analysis, and performance insights.
 
@@ -29,6 +29,9 @@ A powerful browser extension that provides comprehensive analytics for Codeforce
 - Number of solved problems in each difficulty level
 <img width="1522" height="862" alt="10" src="https://github.com/user-attachments/assets/e75cc564-4aab-4cca-91b8-ad4e916f5750" />
 <img width="1367" height="860" alt="08" src="https://github.com/user-attachments/assets/3937aa65-bc60-4174-ad7a-4593e4267572" />
+<img width="1855" height="847" alt="11" src="https://github.com/user-attachments/assets/763a2106-5e6c-48df-85b7-813fa85c93e2" />
+
+
 
 ### 🏆 Contest Progress
 - **Rating History**: Interactive chart showing rating progression over time
