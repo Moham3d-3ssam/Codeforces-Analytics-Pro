@@ -1,4 +1,4 @@
-<img width="1855" height="847" alt="11" src="https://github.com/user-attachments/assets/b093659d-7383-4dca-b157-cb7097bbf424" /># 🔍 Codeforces Analytics Pro
+🔍 Codeforces Analytics Pro
 
 A powerful browser extension that provides comprehensive analytics for Codeforces users, including topic-wise accuracy tracking, contest progress analysis, and performance insights.
 
