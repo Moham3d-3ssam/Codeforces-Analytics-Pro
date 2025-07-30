@@ -150,6 +150,20 @@
     transform: translateY(-2px);
 }
 
+.cf-clickable-summary {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.cf-clickable-summary:hover {
+    background: linear-gradient(135deg, #e8f0fe 0%, #b8d4f0 100%);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(102, 126, 234, 0.2);
+    border: 2px solid #667eea;
+}
+
+
+
 .cf-label {
     font-size: 14px;
     color: #666;
@@ -328,7 +342,8 @@
 
 .cf-unsolved-tag:hover {
     transform: scale(1.05);
-    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    box-shadow: 0 4px 15px rgba(255, 107, 107, 0.4);
 }
 
 .cf-suggestion {
@@ -739,6 +754,16 @@
 .cf-clickable:hover .cf-click-hint {
     opacity: 1;
     transform: translate(-50%, -50%) scale(1.05);
+}
+
+.cf-topic-card .cf-click-hint {
+    position: static;
+    text-align: center;
+    margin-top: 8px;
+    font-size: 12px;
+    color: #667eea;
+    font-weight: 500;
+    opacity: 1;
 }
 
 /* Problems Popup Styles */
